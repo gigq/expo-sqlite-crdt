@@ -1,4 +1,4 @@
 {
-  "name": "expo-sqlite-storage",
+  "name": "expo-sqlite-crdt",
   "platforms": ["ios", "android"]
 }
