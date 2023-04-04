@@ -52,6 +52,9 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 .npmrc
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
 
 # BUCK
 buck-out/
