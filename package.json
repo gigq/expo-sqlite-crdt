@@ -1,7 +1,7 @@
 {
-  "name": "expo-sqlite-storage",
+  "name": "expo-sqlite-crdt",
   "version": "1.2.0",
-  "description": "Expo SQLite default database that can be queried through a WebSQL-like API with an updated android sqlite database to support JSON extension, compatible with RxDB.",
+  "description": "Expo SQLite default database that can be queried through a WebSQL-like API with an updated android sqlite database to support JSON extension, adds cr-sqlite extension",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "sideEffects": false,
@@ -20,16 +20,17 @@
     "sqlite",
     "websql",
     "sql",
-    "rxdb",
+    "cr-sqlite",
+    "crdt",
     "json"
   ],
-  "repository": "https://github.com/jwallet/expo-sqlite-storage",
+  "repository": "https://github.com/gigq/expo-sqlite-crdt/",
   "bugs": {
     "url": "https://github.com/expo/expo/issues"
   },
   "author": "650 Industries, Inc.",
   "license": "MIT",
-  "homepage": "https://github.com/jwallet/expo-sqlite-storage",
+  "homepage": "https://github.com/gigq/expo-sqlite-crdt/",
   "dependencies": {
     "@expo/websql": "1.0.1"
   },
