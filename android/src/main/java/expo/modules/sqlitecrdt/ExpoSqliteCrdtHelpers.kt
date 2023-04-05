@@ -1,4 +1,4 @@
-package expo.modules.sqlitestorage
+package expo.modules.sqlitecrdt
 
 import java.io.File
 import java.io.IOException
@@ -24,11 +24,11 @@ internal fun ensureDirExists(dir: File): File {
   return dir
 }
 
-internal fun pluginResultsToPrimitiveData(results: List<ExpoSqliteStorageModule.SQLitePluginResult>): List<Any> {
+internal fun pluginResultsToPrimitiveData(results: List<ExpoSqliteCrdtModule.SQLitePluginResult>): List<Any> {
   return results.map { convertPluginResultToArray(it) }
 }
 
-private fun convertPluginResultToArray(result: ExpoSqliteStorageModule.SQLitePluginResult): List<Any?> {
+private fun convertPluginResultToArray(result: ExpoSqliteCrdtModule.SQLitePluginResult): List<Any?> {
   val rowsContent = result.rows.map { row ->
     row.map { value ->
       when (value) {

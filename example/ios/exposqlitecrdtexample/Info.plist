@@ -25,7 +25,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>expo.modules.sqlitestorage.example</string>
+          <string>expo.modules.sqlitecrdt.example</string>
         </array>
       </dict>
     </array>

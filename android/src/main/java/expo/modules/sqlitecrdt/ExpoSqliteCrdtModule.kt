@@ -1,5 +1,5 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
-package expo.modules.sqlitestorage
+package expo.modules.sqlitecrdt
 
 import android.content.Context
 import android.database.Cursor
@@ -11,15 +11,15 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-private val TAG = ExpoSqliteStorageModule::class.java.simpleName
+private val TAG = ExpoSqliteCrdtModule::class.java.simpleName
 private val EMPTY_ROWS = arrayOf<Array<Any?>>()
 private val EMPTY_COLUMNS = arrayOf<String?>()
-private val EMPTY_RESULT = ExpoSqliteStorageModule.SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, null)
+private val EMPTY_RESULT = ExpoSqliteCrdtModule.SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, null)
 private val DATABASES: MutableMap<String, SQLiteDatabase?> = HashMap()
 
-class ExpoSqliteStorageModule(private val mContext: Context) : ExportedModule(mContext) {
+class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mContext) {
   override fun getName(): String {
-    return "ExpoSqliteStorage"
+    return "ExpoSqliteCrdt"
   }
 
   @ExpoMethod

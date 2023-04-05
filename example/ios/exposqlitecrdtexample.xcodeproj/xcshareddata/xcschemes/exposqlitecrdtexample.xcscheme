@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "exposqlitestorageexample.app"
-               BlueprintName = "exposqlitestorageexample"
-               ReferencedContainer = "container:exposqlitestorageexample.xcodeproj">
+               BuildableName = "exposqlitecrdtexample.app"
+               BlueprintName = "exposqlitecrdtexample"
+               ReferencedContainer = "container:exposqlitecrdtexample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "exposqlitestorageexampleTests.xctest"
-               BlueprintName = "exposqlitestorageexampleTests"
-               ReferencedContainer = "container:exposqlitestorageexample.xcodeproj">
+               BuildableName = "exposqlitecrdtexampleTests.xctest"
+               BlueprintName = "exposqlitecrdtexampleTests"
+               ReferencedContainer = "container:exposqlitecrdtexample.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "exposqlitestorageexample.app"
-            BlueprintName = "exposqlitestorageexample"
-            ReferencedContainer = "container:exposqlitestorageexample.xcodeproj">
+            BuildableName = "exposqlitecrdtexample.app"
+            BlueprintName = "exposqlitecrdtexample"
+            ReferencedContainer = "container:exposqlitecrdtexample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "exposqlitestorageexample.app"
-            BlueprintName = "exposqlitestorageexample"
-            ReferencedContainer = "container:exposqlitestorageexample.xcodeproj">
+            BuildableName = "exposqlitecrdtexample.app"
+            BlueprintName = "exposqlitecrdtexample"
+            ReferencedContainer = "container:exposqlitecrdtexample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

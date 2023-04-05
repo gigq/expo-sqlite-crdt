@@ -24,23 +24,20 @@ This cannot be used in Expo GO, see the related [error](#error) section.
 It's compatible with [RxDB](https://github.com/pubkey/rxdb) Premium [SQLite](https://rxdb.info/rx-storage-sqlite.html) storage:
 
 ```js
-import {
-  getRxStorageSQLite,
-  getSQLiteBasicsExpoSQLite,
-} from "rxdb-premium/plugins/storage-sqlite";
-import * as ExpoSqliteStorage from "expo-sqlite-storage";
-import { createRxDatabase } from "rxdb";
+import { getRxStorageSQLite, getSQLiteBasicsExpoSQLite } from "rxdb-premium/plugins/storage-sqlite"
+import * as ExpoSqliteCrdt from "expo-sqlite-storage"
+import { createRxDatabase } from "rxdb"
 
 const storage = getRxStorageSQLite({
-  sqliteBasics: getSQLiteBasicsExpoSQLite(ExpoSqliteStorage.openDatabase),
-});
+  sqliteBasics: getSQLiteBasicsExpoSQLite(ExpoSqliteCrdt.openDatabase),
+})
 
 const db = await createRxDatabase({
   name: storage.name,
   storage,
   multiInstance: false,
   ignoreDuplicate: true,
-});
+})
 ```
 
 | iOS                                                  | Android                                                  |

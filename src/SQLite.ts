@@ -1,91 +1,76 @@
-import "./polyfillNextTick";
+import "./polyfillNextTick"
 
-import customOpenDatabase from "@expo/websql/custom";
-import { NativeModulesProxy } from "expo-modules-core";
-import { Platform } from "react-native";
+import customOpenDatabase from "@expo/websql/custom"
+import { NativeModulesProxy } from "expo-modules-core"
+import { Platform } from "react-native"
 
-import {
-  Query,
-  ResultSet,
-  ResultSetError,
-  SQLiteCallback,
-  WebSQLDatabase,
-} from "./SQLite.types";
+import { Query, ResultSet, ResultSetError, SQLiteCallback, WebSQLDatabase } from "./SQLite.types"
 
-const { ExpoSqliteStorage } = NativeModulesProxy;
+const { ExpoSqliteCrdt } = NativeModulesProxy
 
 function zipObject(keys: string[], values: any[]) {
-  const result = {};
+  const result = {}
   for (let i = 0; i < keys.length; i++) {
-    result[keys[i]] = values[i];
+    result[keys[i]] = values[i]
   }
-  return result;
+  return result
 }
 
 class SQLiteDatabase {
-  _name: string;
-  _closed: boolean = false;
+  _name: string
+  _closed: boolean = false
 
   constructor(name: string) {
-    this._name = name;
+    this._name = name
   }
 
   exec(queries: Query[], readOnly: boolean, callback: SQLiteCallback): void {
     if (this._closed) {
-      throw new Error(`The SQLite database is closed`);
+      throw new Error(`The SQLite database is closed`)
     }
 
-    ExpoSqliteStorage.exec(
-      this._name,
-      queries.map(_serializeQuery),
-      readOnly
-    ).then(
+    ExpoSqliteCrdt.exec(this._name, queries.map(_serializeQuery), readOnly).then(
       (nativeResultSets) => {
-        callback(null, nativeResultSets.map(_deserializeResultSet));
+        callback(null, nativeResultSets.map(_deserializeResultSet))
       },
       (error) => {
         // TODO: make the native API consistently reject with an error, not a string or other type
-        callback(error instanceof Error ? error : new Error(error));
+        callback(error instanceof Error ? error : new Error(error))
       }
-    );
+    )
   }
 
   close() {
-    this._closed = true;
-    return ExpoSqliteStorage.close(this._name);
+    this._closed = true
+    return ExpoSqliteCrdt.close(this._name)
   }
 
   deleteAsync(): Promise<void> {
     if (!this._closed) {
-      throw new Error(
-        `Unable to delete '${this._name}' database that is currently open. Close it prior to deletion.`
-      );
+      throw new Error(`Unable to delete '${this._name}' database that is currently open. Close it prior to deletion.`)
     }
 
-    return ExpoSqliteStorage.deleteAsync(this._name);
+    return ExpoSqliteCrdt.deleteAsync(this._name)
   }
 }
 
 function _serializeQuery(query: Query): [string, unknown[]] {
-  return [
-    query.sql,
-    Platform.OS === "android" ? query.args.map(_escapeBlob) : query.args,
-  ];
+  return [query.sql, Platform.OS === "android" ? query.args.map(_escapeBlob) : query.args]
 }
 
 function _deserializeResultSet(nativeResult): ResultSet | ResultSetError {
-  const [errorMessage, insertId, rowsAffected, columns, rows] = nativeResult;
+  const [errorMessage, insertId, rowsAffected, columns, rows] = nativeResult
   // TODO: send more structured error information from the native module so we can better construct
   // a SQLException object
   if (errorMessage !== null) {
-    return { error: new Error(errorMessage) } as ResultSetError;
+    return { error: new Error(errorMessage) } as ResultSetError
   }
 
   return {
     insertId,
     rowsAffected,
     rows: rows.map((row) => zipObject(columns, row)),
-  };
+  }
 }
 
 function _escapeBlob<T>(data: T): T {
@@ -94,14 +79,14 @@ function _escapeBlob<T>(data: T): T {
     return data
       .replace(/\u0002/g, "\u0002\u0002")
       .replace(/\u0001/g, "\u0001\u0002")
-      .replace(/\u0000/g, "\u0001\u0001") as any;
+      .replace(/\u0000/g, "\u0001\u0001") as any
     /* eslint-enable no-control-regex */
   } else {
-    return data;
+    return data
   }
 }
 
-const _openExpoSQLiteDatabase = customOpenDatabase(SQLiteDatabase);
+const _openExpoSQLiteDatabase = customOpenDatabase(SQLiteDatabase)
 
 // @needsAudit @docsMissing
 /**
@@ -125,17 +110,11 @@ export function openDatabase(
   callback?: (db: WebSQLDatabase) => void
 ): WebSQLDatabase {
   if (name === undefined) {
-    throw new TypeError(`The database name must not be undefined`);
+    throw new TypeError(`The database name must not be undefined`)
   }
-  const db = _openExpoSQLiteDatabase(
-    name,
-    version,
-    description,
-    size,
-    callback
-  );
-  db.exec = db._db.exec.bind(db._db);
-  db.closeAsync = db._db.close.bind(db._db);
-  db.deleteAsync = db._db.deleteAsync.bind(db._db);
-  return db;
+  const db = _openExpoSQLiteDatabase(name, version, description, size, callback)
+  db.exec = db._db.exec.bind(db._db)
+  db.closeAsync = db._db.close.bind(db._db)
+  db.deleteAsync = db._db.deleteAsync.bind(db._db)
+  return db
 }

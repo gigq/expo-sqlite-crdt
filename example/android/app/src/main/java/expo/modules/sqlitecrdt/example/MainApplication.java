@@ -1,4 +1,4 @@
-package expo.modules.sqlitestorage.example;
+package expo.modules.sqlitecrdt.example;
 
 import android.app.Application;
 import android.content.res.Configuration;

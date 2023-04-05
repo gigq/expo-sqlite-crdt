@@ -22,7 +22,7 @@
   return dispatch_get_main_queue();
 }
 
-EX_EXPORT_MODULE(ExpoSqliteStorage);
+EX_EXPORT_MODULE(ExpoSqliteCrdt);
 
 - (void)setModuleRegistry:(EXModuleRegistry *)moduleRegistry
 {
@@ -58,7 +58,8 @@ EX_EXPORT_MODULE(ExpoSqliteStorage);
     if (sqlite3_open([path UTF8String], &db) != SQLITE_OK) {
       return nil;
     };
-    sqlite3_load_extension(&db, @"crsqlite-darwin-aarch64.dylib");
+    // Not available in built in sqlite3
+    //sqlite3_load_extension(&db, @"crsqlite-darwin-aarch64.dylib");
     cachedDB = [NSValue valueWithPointer:db];
     [cachedDatabases setObject:cachedDB forKey:dbName];
   }

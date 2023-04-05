@@ -113,9 +113,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'expo.modules.sqlitestorage.example'
+    namespace 'expo.modules.sqlitecrdt.example'
     defaultConfig {
-        applicationId 'expo.modules.sqlitestorage.example'
+        applicationId 'expo.modules.sqlitecrdt.example'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
