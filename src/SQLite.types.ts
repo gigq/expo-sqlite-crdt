@@ -84,10 +84,16 @@ export interface SQLTransaction {
 }
 
 // @docsMissing
-export type SQLStatementCallback = (transaction: SQLTransaction, resultSet: SQLResultSet) => void;
+export type SQLStatementCallback = (
+  transaction: SQLTransaction,
+  resultSet: SQLResultSet
+) => void;
 
 // @docsMissing
-export type SQLStatementErrorCallback = (transaction: SQLTransaction, error: SQLError) => boolean;
+export type SQLStatementErrorCallback = (
+  transaction: SQLTransaction,
+  error: SQLError
+) => boolean;
 
 // @needsAudit
 export type SQLResultSet = {
