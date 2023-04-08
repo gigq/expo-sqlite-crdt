@@ -4,7 +4,7 @@
 
 #import <ExpoModulesCore/EXFileSystemInterface.h>
 
-#import <sqlite3.h>
+#import "sqlite3.h"
 
 @interface EXSQLite ()
 
@@ -53,13 +53,20 @@ EX_EXPORT_MODULE(ExpoSqliteCrdt);
     cachedDB = [cachedDatabases objectForKey:dbName];
   }
   if (cachedDB == nil) {
+    // If the database is not cached, load crsqlite
+    int rv = core_init("");
+    if (rv == 0) {
+      NSLog(@"CRSqlite loaded");
+    } else {
+      NSLog(@"CRSqlite failed to load");
+    }
+
     [cachedDatabases removeObjectForKey:dbName];
     sqlite3 *db;
     if (sqlite3_open([path UTF8String], &db) != SQLITE_OK) {
       return nil;
     };
-    // Not available in built in sqlite3
-    //sqlite3_load_extension(&db, @"crsqlite-darwin-aarch64.dylib");
+
     cachedDB = [NSValue valueWithPointer:db];
     [cachedDatabases setObject:cachedDB forKey:dbName];
   }

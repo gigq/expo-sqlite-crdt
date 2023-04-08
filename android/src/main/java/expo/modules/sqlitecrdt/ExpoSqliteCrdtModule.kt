@@ -3,10 +3,13 @@ package expo.modules.sqlitecrdt
 
 import android.content.Context
 import android.database.Cursor
-import io.requery.android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import expo.modules.core.ExportedModule
 import expo.modules.core.Promise
 import expo.modules.core.interfaces.ExpoMethod
+import io.requery.android.database.sqlite.SQLiteCustomExtension
+import io.requery.android.database.sqlite.SQLiteDatabase
+import io.requery.android.database.sqlite.SQLiteDatabaseConfiguration
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -14,7 +17,8 @@ import java.util.*
 private val TAG = ExpoSqliteCrdtModule::class.java.simpleName
 private val EMPTY_ROWS = arrayOf<Array<Any?>>()
 private val EMPTY_COLUMNS = arrayOf<String?>()
-private val EMPTY_RESULT = ExpoSqliteCrdtModule.SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, null)
+private val EMPTY_RESULT =
+    ExpoSqliteCrdtModule.SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, null)
 private val DATABASES: MutableMap<String, SQLiteDatabase?> = HashMap()
 
 class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mContext) {
@@ -23,26 +27,32 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
   }
 
   @ExpoMethod
-  fun exec(dbName: String, queries: ArrayList<ArrayList<Any>>, readOnly: Boolean, promise: Promise) {
+  fun exec(
+      dbName: String,
+      queries: ArrayList<ArrayList<Any>>,
+      readOnly: Boolean,
+      promise: Promise
+  ) {
     try {
       val db = getDatabase(dbName)
-      val results = queries.map { sqlQuery ->
-        val sql = sqlQuery[0] as String
-        val bindArgs = convertParamsToStringArray(sqlQuery[1] as ArrayList<Any?>)
-        try {
-          if (isSelect(sql)) {
-            doSelectInBackgroundAndPossiblyThrow(sql, bindArgs, db)
-          } else { // update/insert/delete
-            if (readOnly) {
-              SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, ReadOnlyException())
-            } else {
-              doUpdateInBackgroundAndPossiblyThrow(sql, bindArgs, db)
+      val results =
+          queries.map { sqlQuery ->
+            val sql = sqlQuery[0] as String
+            val bindArgs = convertParamsToStringArray(sqlQuery[1] as ArrayList<Any?>)
+            try {
+              if (isSelect(sql)) {
+                doSelectInBackgroundAndPossiblyThrow(sql, bindArgs, db)
+              } else { // update/insert/delete
+                if (readOnly) {
+                  SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, ReadOnlyException())
+                } else {
+                  doUpdateInBackgroundAndPossiblyThrow(sql, bindArgs, db)
+                }
+              }
+            } catch (e: Throwable) {
+              SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, e)
             }
           }
-        } catch (e: Throwable) {
-          SQLitePluginResult(EMPTY_ROWS, EMPTY_COLUMNS, 0, 0, e)
-        }
-      }
       val data = pluginResultsToPrimitiveData(results)
       promise.resolve(data)
     } catch (e: Exception) {
@@ -52,9 +62,7 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
 
   @ExpoMethod
   fun close(dbName: String, promise: Promise) {
-    DATABASES
-      .remove(dbName)
-      ?.close()
+    DATABASES.remove(dbName)?.close()
     promise.resolve(null)
   }
 
@@ -62,7 +70,10 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
   fun deleteAsync(dbName: String, promise: Promise) {
     val errorCode = "SQLiteError"
     if (DATABASES.containsKey(dbName)) {
-      promise.reject(errorCode, "Unable to delete database '$dbName' that is currently open. Close it prior to deletion.")
+      promise.reject(
+          errorCode,
+          "Unable to delete database '$dbName' that is currently open. Close it prior to deletion."
+      )
     }
     val dbFile = File(pathForDatabaseName(dbName))
     if (!dbFile.exists()) {
@@ -76,7 +87,7 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
     promise.resolve(null)
   }
 
-  private fun castToNonNullString(input: String?) : String {
+  private fun castToNonNullString(input: String?): String {
     if (input == null) {
       throw IOException("This should never happen")
     } else {
@@ -86,9 +97,9 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
 
   // do a update/delete/insert operation
   private fun doUpdateInBackgroundAndPossiblyThrow(
-    sql: String,
-    bindArgs: Array<String?>?,
-    db: SQLiteDatabase
+      sql: String,
+      bindArgs: Array<String?>?,
+      db: SQLiteDatabase
   ): SQLitePluginResult {
     return db.compileStatement(sql).use { statement ->
       if (bindArgs != null) {
@@ -119,9 +130,9 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
 
   // do a select operation
   private fun doSelectInBackgroundAndPossiblyThrow(
-    sql: String,
-    bindArgs: Array<String?>,
-    db: SQLiteDatabase
+      sql: String,
+      bindArgs: Array<String?>,
+      db: SQLiteDatabase
   ): SQLitePluginResult {
     return db.rawQuery(sql, bindArgs).use { cursor ->
       val numRows = cursor.count
@@ -149,9 +160,9 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
       Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(index)
       Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(index)
       Cursor.FIELD_TYPE_BLOB ->
-        // convert byte[] to binary string; it's good enough, because
-        // WebSQL doesn't support blobs anyway
-        String(cursor.getBlob(index))
+          // convert byte[] to binary string; it's good enough, because
+          // WebSQL doesn't support blobs anyway
+          String(cursor.getBlob(index))
       Cursor.FIELD_TYPE_STRING -> cursor.getString(index)
       else -> null
     }
@@ -166,6 +177,7 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
 
   @Throws(IOException::class)
   private fun getDatabase(name: String): SQLiteDatabase {
+    Log.i("ReactNativeJS", "get database called")
     var database: SQLiteDatabase? = null
     val path = pathForDatabaseName(name)
     if (File(path).exists()) {
@@ -173,18 +185,30 @@ class ExpoSqliteCrdtModule(private val mContext: Context) : ExportedModule(mCont
     }
     if (database == null) {
       DATABASES.remove(name)
-      database = SQLiteDatabase.openOrCreateDatabase(path, null)
+      Log.i("ReactNativeJS", "starting to load db")
+      val extensionPath = "libcrsql"
+      val customExtension = SQLiteCustomExtension(extensionPath, null)
+      val configuration =
+          SQLiteDatabaseConfiguration(
+              path,
+              SQLiteDatabase.CREATE_IF_NECESSARY or SQLiteDatabase.OPEN_READWRITE,
+              emptyList(),
+              emptyList(),
+              listOf(customExtension)
+          )
+      database = SQLiteDatabase.openDatabase(configuration, null, null)
+      Log.i("ReactNativeJS", database.toString())
       DATABASES[name] = database
     }
     return database!!
   }
 
   internal class SQLitePluginResult(
-    val rows: Array<Array<Any?>>,
-    val columns: Array<String?>,
-    val rowsAffected: Int,
-    val insertId: Long,
-    val error: Throwable?
+      val rows: Array<Array<Any?>>,
+      val columns: Array<String?>,
+      val rowsAffected: Int,
+      val insertId: Long,
+      val error: Throwable?
   )
 
   private class ReadOnlyException : Exception("could not prepare statement (23 not authorized)")

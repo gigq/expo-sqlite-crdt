@@ -66,6 +66,10 @@ android {
     targetCompatibility JavaVersion.VERSION_11
   }
 
+  sourceSets.main {
+    resources.srcDir 'src/main/external'
+  }
+
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_11.majorVersion
   }
