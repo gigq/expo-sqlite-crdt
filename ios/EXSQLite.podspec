@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.platform       = :ios, '13.0'
   s.source         = { git: 'https://github.com/expo/expo.git' }
   s.static_framework = true
-  s.ios.vendored_library = 'Libraries/libsqlite3_sim_arm64.a', 'Libraries/libcrsql_bundle.a'
+  s.ios.vendored_library = 'Libraries/iphoneos/libsqlite3_arm64.a', 'Libraries/iphoneos/libcrsql_bundle.a'
 
   s.dependency 'ExpoModulesCore'
 
